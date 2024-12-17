@@ -26,8 +26,16 @@ jobs:
         python -m venv venv
         source venv/bin/activate
         pip install dbt-athena-community
+    
+    # Step 4: AWS Credentials
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
 
-    # Step 4: Create the profiles.yml file for AWS Athena
+    # Step 5: Create the profiles.yml file for AWS Athena
     - name: Create profiles.yml
       run: |
         mkdir -p ~/.dbt/
@@ -44,7 +52,7 @@ jobs:
         echo "      threads: 1" >> ~/.dbt/profiles.yml
 
 
-    # Step 5: Run dbt models
+    # Step 6: Run dbt models
     - name: Run dbt models
       run: |
         source venv/bin/activate
