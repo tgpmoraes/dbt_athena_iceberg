@@ -1,9 +1,9 @@
-name: Run dbt Models on Dremio Software
+name: Run dbt Models on AWS Athena
 
 on:
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   run-dbt:
@@ -43,10 +43,16 @@ jobs:
         echo "      schema: landing_zone" >> ~/.dbt/profiles.yml
         echo "      threads: 1" >> ~/.dbt/profiles.yml
 
+    # Step 5: AWS Credentials
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
 
-    # Step 5: Run dbt models
+    # Step 6: Run dbt models
     - name: Run dbt models
       run: |
         source venv/bin/activate
-        cd my_dbt_project
         dbt run
