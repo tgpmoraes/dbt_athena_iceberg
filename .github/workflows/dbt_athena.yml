@@ -48,5 +48,4 @@ jobs:
     - name: Run dbt models
       run: |
         source venv/bin/activate
-        cd dbt_athena_iceberg
         dbt run
