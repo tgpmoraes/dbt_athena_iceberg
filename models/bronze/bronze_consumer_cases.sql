@@ -14,7 +14,8 @@ final as (
     resolution_date,
     violation_type,
     compensation_amount,
-    updated_at
+    updated_at,
+    null as test
     FROM (
         SELECT *,
         row_number() over(partition by case_id order by updated_at desc) as ROW_NUM
