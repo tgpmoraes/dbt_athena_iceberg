@@ -1,9 +1,9 @@
-name: Run dbt Models on Dremio Software
+name: Run dbt Models on AWS Athena
 
 on:
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   run-dbt:
