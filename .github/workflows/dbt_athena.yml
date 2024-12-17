@@ -1,0 +1,52 @@
+name: Run dbt Models on Dremio Software
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-dbt:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Step 2: Set up Python environment
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    # Step 3: Install dbt-dremio
+    - name: Install dbt-athena-community
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install dbt-athena-community
+
+    # Step 4: Create the profiles.yml file for AWS Athena
+    - name: Create profiles.yml
+      run: |
+        mkdir -p ~/.dbt/
+        echo "dbt_athena_iceberg:" > ~/.dbt/profiles.yml
+        echo "  target: dev" >> ~/.dbt/profiles.yml
+        echo "  outputs:" >> ~/.dbt/profiles.yml
+        echo "    dev:" >> ~/.dbt/profiles.yml
+        echo "      type: athena" >> ~/.dbt/profiles.yml
+        echo "      database: awsdatacatalog" >> ~/.dbt/profiles.yml
+        echo "      region_name: us-east-1" >> ~/.dbt/profiles.yml
+        echo "      s3_data_dir: s3://tgpmoraes-s3/landing_zone/" >> ~/.dbt/profiles.yml
+        echo "      s3_staging_dir: s3://tgpmoraes-s3/query-results/" >> ~/.dbt/profiles.yml
+        echo "      schema: landing_zone" >> ~/.dbt/profiles.yml
+        echo "      threads: 1" >> ~/.dbt/profiles.yml
+
+
+    # Step 5: Run dbt models
+    - name: Run dbt models
+      run: |
+        source venv/bin/activate
+        cd my_dbt_project
+        dbt run
